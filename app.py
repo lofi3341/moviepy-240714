@@ -103,7 +103,7 @@ def insert_audio(uploaded_file, audio_file):
     final_clip = video_clip.set_audio(audio_clip)
     
     try:
-        final_clip.write_videofile(temp_output_path, codec='libx264', audio_codec='aac')
+        final_clip.write_videofile(temp_output_path, codec='libx264', audio_codec='aac', verbose=True, logger='bar')
     except Exception as e:
         st.error(f"Error writing video file: {e}")
     
@@ -129,7 +129,7 @@ def resize_video(uploaded_file, width, height):
     
     clip = mp.VideoFileClip(temp_video_path)
     resized_clip = clip.resize((width, height))
-    resized_clip.write_videofile(temp_output_path, codec='libx264', audio_codec='aac')
+    resized_clip.write_videofile(temp_output_path, codec='libx264', audio_codec='aac', verbose=True, logger='bar')
 
     with open(temp_output_path, 'rb') as f:
         output_file.write(f.read())
@@ -202,9 +202,3 @@ if 'converted_videos' in st.session_state:
         zip_file = create_zip(resized_videos, "resized_videos_1920x360.zip")
         zip_file.seek(0)
         st.download_button(label="全動画を1920x360に変換しzipでダウンロード", data=zip_file, file_name="resized_videos_1920x360.zip", mime="application/zip")
-
-if st.button("リセット"):
-    if 'uploaded_videos' in st.session_state:
-        st.session_state.uploaded_videos = []
-    if 'converted_videos' in st.session_state:
-        st.session_state.converted_videos = []
