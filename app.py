@@ -4,6 +4,7 @@ import moviepy.editor as mp
 import zipfile
 from io import BytesIO
 import tempfile
+import os
 
 try:
     import cv2
@@ -54,6 +55,10 @@ def process_and_merge_videos(uploaded_files):
             output_file.write(f.read())
         output_file.seek(0)
         output_files.append(output_file)
+        
+        os.remove(temp_file_path)
+        os.remove(output_file_path)
+
     return output_files
 
 # 動画から音声を抽出する関数
@@ -72,6 +77,10 @@ def extract_audio(uploaded_file):
     with open(temp_audio_path, 'rb') as f:
         audio_file.write(f.read())
     audio_file.seek(0)
+
+    os.remove(temp_video_path)
+    os.remove(temp_audio_path)
+    
     return audio_file
 
 # 音声を挿入する関数
@@ -93,7 +102,6 @@ def insert_audio(uploaded_file, audio_file):
 
     final_clip = video_clip.set_audio(audio_clip)
     
-    # ここで try-except ブロックを追加
     try:
         final_clip.write_videofile(temp_output_path, codec='libx264', audio_codec='aac')
     except Exception as e:
@@ -102,6 +110,11 @@ def insert_audio(uploaded_file, audio_file):
     with open(temp_output_path, 'rb') as f:
         output_file.write(f.read())
     output_file.seek(0)
+
+    os.remove(temp_video_path)
+    os.remove(temp_audio_path)
+    os.remove(temp_output_path)
+    
     return output_file
 
 # 動画を指定したサイズに変換する関数
@@ -121,6 +134,10 @@ def resize_video(uploaded_file, width, height):
     with open(temp_output_path, 'rb') as f:
         output_file.write(f.read())
     output_file.seek(0)
+
+    os.remove(temp_video_path)
+    os.remove(temp_output_path)
+    
     return output_file
 
 # 全ての出力動画をzipアーカイブにまとめる関数
